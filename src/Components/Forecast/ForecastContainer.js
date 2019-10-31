@@ -1,16 +1,36 @@
-import React, {Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {SearchBar} from './../Search';
+
+
 
 class ForecastContainer extends Component {
 
-    componentDidMount(){
+    state = {
+        value: ''
+    }
+
+    componentDidMount() {
         console.log('state', this.props.location);
     }
 
-    render(){
-        return (
-            <div>
+    onValueChange = (value) => {
+        console.log('forecast value CHANGE:', value);
+    }
 
+    onValueSelect = (value) => {
+        console.log('forecast value SELECT:', value);
+    }
+
+    render() {
+        
+        return (
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <SearchBar
+                    onValueChange={this.onValueChange}
+                    onValueSelect={this.onValueSelect}
+                 />
+                <h1>Tel Aviv</h1>
             </div>
         );
     }

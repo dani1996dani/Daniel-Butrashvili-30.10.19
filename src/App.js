@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import './App.css';
 import { Provider } from 'react-redux';
 
 import { NavBar, ForecastContainer } from './Components';
-import { HOST, API_KEY } from './settings';
 import { store } from './redux';
 
 
@@ -25,7 +23,6 @@ class App extends Component {
 				store={store}>
 				<div className="App">
 					<NavBar />
-					<h1>Tel Aviv</h1>
 					<ForecastContainer />
 				</div>
 			</Provider>
