@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class AutocompleteInput extends Component {
+class SearchBar extends Component {
 
     state = {
         value: '',
@@ -28,7 +28,17 @@ class AutocompleteInput extends Component {
             clickedOnSuggestion: bool
         });
     }
+
+    resetSelectedIndex = () => {
+        this.setState({
+            selectedIndex: -1
+        })
+    }
+
     setShouldRenderAutoComplete = (bool) => {
+        if (!bool){
+            this.resetSelectedIndex();
+        }
         this.setState({
             shouldRenderAutoComplete: bool,
         });
@@ -169,4 +179,4 @@ class AutocompleteInput extends Component {
     }
 }
 
-export default AutocompleteInput;
+export default SearchBar;

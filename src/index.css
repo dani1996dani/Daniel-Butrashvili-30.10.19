@@ -29,6 +29,8 @@ code {
   background-image: linear-gradient(#b6fbff, #83a4d4);
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .navbar a {
@@ -86,10 +88,17 @@ h1.company-name {
   margin-bottom: 8px;
 }
 
-.day-card-temp{
+.day-card-max-degrees{
+  color: black;
   font-size: 45px;
   letter-spacing: 1px;
   font-weight: 300;
+}
+.day-card-min-degrees{
+  color: gray;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  font-weight: 200;
 }
 
 .day-card-unit{
@@ -129,8 +138,6 @@ textarea, input{
   background-color: #B1F3FB;
 }
 
-
-
 .autocomplete-label:hover{
   background-color: #B1F3FB;
 }
@@ -146,5 +153,19 @@ p.country-title{
   font-weight: 300;
   font-size: 16px;
   font-style: italic;
+}
+
+.current-conditions-degrees {
+  font-size: 36px;
+  color: black;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.current-conditions-title{
+  margin: 0;
+  margin-top: 1rem;
+  font-style: italic;
+  font-weight: 600;
 }
 

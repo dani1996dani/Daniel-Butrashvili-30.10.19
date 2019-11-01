@@ -1,7 +1,7 @@
 import { SET_NEW_LOCATION } from '../types';
 
 const initialState = {
-    locationKey: '234984',
+    locationKey: '215854',
     locationName: 'Tel Aviv',
     locationCountryName: 'Israel',
 };
