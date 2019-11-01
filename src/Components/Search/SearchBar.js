@@ -4,7 +4,6 @@ class AutocompleteInput extends Component {
 
     state = {
         value: '',
-        options: ['test', 'test2', 'test', 'test3', 'test66', 'te', 'te'],
         inputClassName: 'search',
         clickedOnSuggestion: false,
         shouldRenderAutoComplete: false,
@@ -13,22 +12,14 @@ class AutocompleteInput extends Component {
         maxOptionsVisible: 5,
     }
 
-    renderItem = (name, index) => {
+    renderItem = (value, index) => {
         const selected = this.state.selectedIndex === index;
-        console.log('selected', selected);
-        return (
-            <div key={index} className='autocomplete-label' style={{ backgroundColor: selected ? '#B1F3FB' : 'white' }} onMouseDown={() => {
-                console.log('clicked');
-                this.selectValue(name);
-            }} >
-                <span>{name}</span>
-            </div>
-        )
+        return this.props.renderItem(value, selected, index);
     }
 
     selectValue = (value) => {
         this.props.onValueSelect(value);
-        this.setValue(value);
+        // this.setValue(value, false);
         this.setShouldRenderAutoComplete(false);
     }
 
@@ -62,6 +53,7 @@ class AutocompleteInput extends Component {
         const { selectedIndex } = this.state;
         switch (event.keyCode) {
             case 13:
+                // this.props.onValueSelect(filteredOptions[selectedIndex]);
                 this.selectValue(filteredOptions[selectedIndex]);
                 break;
             case 38: {
@@ -93,19 +85,24 @@ class AutocompleteInput extends Component {
         }
     }
 
-    setValue = (value) => {
-        this.props.onValueChange(value);
+    setValue = (value, allowParentCallback = true) => {
+        if (allowParentCallback){
+            this.props.onValueChange(value);
+        }
         this.setState({
             value,
         });
     }
 
     getFilteredOptions = () => {
-        const { value, options } = this.state;
-        const filteredOptions = options.filter((option) => option.includes(value));
+        const { value } = this.state;
+        const { options } = this.props;
+        const filteredOptions = this.props.filterSearch(options, value);
+        // const filteredOptions = options.filter((option) => option.toLowerCase().includes(value.toLowerCase()));
         return filteredOptions;
-
     }
+
+    
 
     renderAutoComplete = () => {
         const { shouldRenderAutoComplete, maxOptionsVisible } = this.state;
@@ -123,7 +120,7 @@ class AutocompleteInput extends Component {
                 break;
         }
         return (
-            <div style={{ width: '100%', position: 'absolute', top: 40 }}>
+            <div style={{ width: '100%', position: 'absolute', top: 40, zIndex: 999 }}>
                 {items}
             </div>
         )
@@ -144,6 +141,14 @@ class AutocompleteInput extends Component {
     onInputFocus = () => {
         this.setListenToKeyEvents(true);
     }
+    
+    componentDidUpdate(oldProps) {
+        if (oldProps.options !== this.props.options){
+            const filteredOptions = this.getFilteredOptions();
+            const shouldRenderAutoComplete = filteredOptions.length > 0;
+            this.setShouldRenderAutoComplete(shouldRenderAutoComplete);
+        }
+    }
 
     render() {
         const { shouldRenderAutoComplete } = this.state;
@@ -151,7 +156,7 @@ class AutocompleteInput extends Component {
         return (
             <div style={{ width: 300, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
                 <input
-                    value={this.state.value}
+                    value={this.props.value}
                     className={inputClassName}
                     placeholder='City Name'
                     onChange={(e) => { this.onInputChange(e) }}

@@ -122,10 +122,29 @@ textarea, input{
   width: 100%;
   padding: 8px;
   cursor: pointer;
+  border-top: 1px solid #e0e0e0;
 }
+
+.autocomplete-label.selected{
+  background-color: #B1F3FB;
+}
+
 
 
 .autocomplete-label:hover{
   background-color: #B1F3FB;
+}
+
+p.city-title{
+  color: black;
+  font-weight: 600;
+  font-size: 28px;
+}
+
+p.country-title{
+  color: black;
+  font-weight: 300;
+  font-size: 16px;
+  font-style: italic;
 }
 
