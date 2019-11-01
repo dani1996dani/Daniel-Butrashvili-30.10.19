@@ -8,6 +8,7 @@ import { HOST, API_KEY, FORECAST_EXPIRATION_TIME_SPAN } from './../../settings';
 import { setNewLocation } from './../../redux/location/locationActions';
 import DaysContainer from './DaysContainer';
 import CurrentConditions from './CurrentConditions';
+import Location from './Location';
 import { getStoredItem,setItemInStorage, currentConditionsPostfix } from './../../localStorage';
 import { setCurrentConditions } from './../../redux/currentConditions/currentConditionsActions';
 
@@ -177,8 +178,7 @@ class ForecastContainer extends Component {
                     renderItem={this.renderSearchItem }
                     filterSearch={this.filterSearchOptions}
                  />
-                <p className='city-title' style={{margin: 0, marginTop: 16}}>{this.props.location.locationName}</p>
-                <p className='country-title' style={{margin: 0}}>{this.props.location.locationCountryName}</p>
+                 <Location location={this.props.location}/>
                 <CurrentConditions 
                     currentConditions={this.props.currentConditions}
                 />

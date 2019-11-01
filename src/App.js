@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import { Provider } from 'react-redux';
 
-import { NavBar, ForecastContainer } from './Components';
+import { NavBar, ConnectedRoot } from './Components';
 import { store } from './redux';
-
 
 class App extends Component {
 
@@ -23,7 +22,7 @@ class App extends Component {
 				store={store}>
 				<div className="App">
 					<NavBar />
-					<ForecastContainer />
+					<ConnectedRoot />
 				</div>
 			</Provider>
 		);

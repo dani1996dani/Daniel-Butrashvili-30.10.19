@@ -1,3 +1,5 @@
 export const SET_NEW_LOCATION = "SET_NEW_LOCATION";
 
 export const SET_CURRENT_CONDITIONS = 'SET_CURRENT_CONDITIONS';
+
+export const SET_PAGE = 'SET_PAGE';
