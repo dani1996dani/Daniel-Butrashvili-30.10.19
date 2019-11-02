@@ -7,11 +7,11 @@ class NavBar extends Component {
     render() {
         const pages = ['Forecast', 'Favorites'];
         const { pageName } = this.props.page;
-        const pageLinks = pages.map((page) => {
+        const pageLinks = pages.map((page, index) => {
             const isSelectedPage = pageName === page;
             const className = isSelectedPage ? 'active no-select' : 'no-select';
             return (
-                <span onClick={() => {this.props.setPage(page)}} className={className}>{page}</span>
+                <span key={index} onClick={() => {this.props.setPage(page)}} className={className}>{page}</span>
             );
         })
         return (

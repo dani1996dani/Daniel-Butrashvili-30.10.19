@@ -7,16 +7,22 @@ class Location extends Component {
     }
 
     toggleFavorite = () => {
-        this.setState({
-            favorite: !this.state.favorite
-        });
+        const { isFavorite, location } = this.props;
+        const { locationKey, locationName } = location;
+        if (isFavorite){
+            this.props.onUnFavorite(locationKey);
+        } else {
+            // this.props.onFavorite(locationKey, locationName);
+            this.props.onFavorite();
+        }
     }
 
     render() {
-        const { location } = this.props;
-        const { favorite } = this.state;
-        const iconName = favorite ? 'star' : 'hollowStar';
-        const title = favorite ? 'Remove from favorites' : 'Add to favorites';
+        // console.log('isFavorite, ', this.props.isFavorite);
+        const { location, isFavorite } = this.props;
+        // const { favorite } = this.state;
+        const iconName = isFavorite ? 'star' : 'hollowStar';
+        const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
         return (
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <p className='city-title' style={{ margin: 0 }}>{location.locationName}</p>

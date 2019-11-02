@@ -1,7 +1,7 @@
 import { SET_PAGE } from '../types';
 
 const initialState = {
-    pageName: 'Forecast',
+    pageName: 'Favorites',
 };
 
 export default (state = initialState, action) => {

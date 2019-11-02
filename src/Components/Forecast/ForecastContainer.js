@@ -11,6 +11,7 @@ import CurrentConditions from './CurrentConditions';
 import Location from './Location';
 import { getStoredItem,setItemInStorage, currentConditionsPostfix } from './../../localStorage';
 import { setCurrentConditions } from './../../redux/currentConditions/currentConditionsActions';
+import { addFavorite, removeFavorite } from './../../redux/favorites/favoritesActions';
 
 class ForecastContainer extends Component {
 
@@ -22,7 +23,6 @@ class ForecastContainer extends Component {
     }
 
     componentDidMount() {
-        console.log('state', this.props.location);
         const { locationKey } = this.props.location;
         this.getForecastForLocation(locationKey);
         this.getCurrentConditionsForLocation(locationKey);
@@ -167,7 +167,22 @@ class ForecastContainer extends Component {
         return filteredOptions;
     }
 
+    isLocationFavorite = (locationKey) => {
+        const savedFavorites = this.props.favorites;
+        // console.log('savedFavorites', savedFavorites);
+        if (!savedFavorites)
+            return false;
+        for (let i = 0; i < savedFavorites.length; i++){
+            const currentFavorite = savedFavorites[i];
+            if (currentFavorite.locationKey === locationKey)
+                return true;
+        }
+        return false;
+    }
+
     render() {
+        const { location } = this.props;
+        const { locationKey, locationName } = location;
         return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1}}>
                 <SearchBar
@@ -178,7 +193,12 @@ class ForecastContainer extends Component {
                     renderItem={this.renderSearchItem }
                     filterSearch={this.filterSearchOptions}
                  />
-                 <Location location={this.props.location}/>
+                 <Location 
+                    location={location}
+                    isFavorite={this.isLocationFavorite(locationKey)}
+                    onFavorite={() => {this.props.addFavorite(this.props.favorites, locationKey, locationName);}}
+                    onUnFavorite={() => {this.props.removeFavorite(this.props.favorites, locationKey)}}
+                    />
                 <CurrentConditions 
                     currentConditions={this.props.currentConditions}
                 />
@@ -194,12 +214,15 @@ const mapStateToProps = state => {
     return {
         location: state.location,
         currentConditions: state.currentConditions,
+        favorites: state.favorites,
     };
 };
 
 const mapDispatchToProps = dispatch => ({
     setNewLocation: setNewLocation(dispatch),
     setCurrentConditions: setCurrentConditions(dispatch),
+    addFavorite: addFavorite(dispatch),
+    removeFavorite: removeFavorite(dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ForecastContainer);

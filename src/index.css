@@ -169,3 +169,18 @@ p.country-title{
   font-weight: 600;
 }
 
+p.favorite{
+  margin: 8px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+div.favorite-card{
+  cursor: pointer;
+  background-color: transparent;
+}
+
+div.favorite-card:hover{
+  background-color: rgba(255,255,255,0.5);
+  transition: 0.25s;
+}

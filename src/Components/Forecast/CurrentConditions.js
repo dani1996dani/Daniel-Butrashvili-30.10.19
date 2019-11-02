@@ -6,7 +6,7 @@ class CurrentConditions extends Component{
         if (!currentConditions || currentConditions === undefined){
             return null;
         }
-        console.log('currentConditions', currentConditions);
+        // console.log('currentConditions', currentConditions);
         const { Temperature, WeatherText } = currentConditions;
         if (!Temperature || Temperature === undefined || !WeatherText || WeatherText === undefined)
             return null;
