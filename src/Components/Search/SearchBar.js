@@ -10,6 +10,7 @@ class SearchBar extends Component {
         listenToKeyEvents: false,
         selectedIndex: -1,
         maxOptionsVisible: 5,
+        isPatternValid: true,
     }
 
     renderItem = (value, index) => {
@@ -63,7 +64,8 @@ class SearchBar extends Component {
         const { selectedIndex } = this.state;
         switch (event.keyCode) {
             case 13:
-                // this.props.onValueSelect(filteredOptions[selectedIndex]);
+                if (selectedIndex < 0 || selectedIndex >= amountOfOptionsVisible)
+                    return;
                 this.selectValue(filteredOptions[selectedIndex]);
                 break;
             case 38: {
@@ -137,6 +139,16 @@ class SearchBar extends Component {
     }
 
     onInputChange = (e) => {
+        //allowing only English letters and whitespace, without any numbers, as was asked in the PDF
+        const regex = new RegExp(this.props.pattern);
+        const { value } = e.target;
+        const isPatternValid = value.length === 0 ? true : regex.test(value);
+        this.setState({
+            isPatternValid
+        });
+        if (value.length !== 0 && !isPatternValid){
+            return;
+        }
         this.setValue(e.target.value);
         const filteredOptions = this.getFilteredOptions();
         const shouldRenderAutoComplete = filteredOptions.length > 0;
@@ -150,6 +162,15 @@ class SearchBar extends Component {
 
     onInputFocus = () => {
         this.setListenToKeyEvents(true);
+    }
+
+    getErrorText = () => {
+        const { isPatternValid } = this.state;
+        if (isPatternValid)
+            return;
+        return (
+            <p style={{textAlign: 'left', color: 'red', fontSize: 14}}>{this.props.patternError}</p>
+            );
     }
     
     componentDidUpdate(oldProps) {
@@ -173,6 +194,7 @@ class SearchBar extends Component {
                     onBlur={this.onInputBlur}
                     onFocus={this.onInputFocus}
                 />
+                {this.getErrorText()}
                 {this.renderAutoComplete()}
             </div>
         );

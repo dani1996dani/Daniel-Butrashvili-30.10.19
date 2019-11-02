@@ -12,6 +12,14 @@ class FavoritesContainer extends Component {
     }
 
     getFavoriteViews = () => {
+        const { favorites } = this.props;
+        if (!favorites || favorites === undefined || favorites.length === 0)
+            return (
+                <div>
+                    <p>You did not select any favorite locations yet.</p>
+                    <p>Tap the star near the location to add it to your favorites list.</p>
+                </div>
+            );
         const favoriteViews = this.props.favorites.map((favoriteLocation, index) => {
             const { locationKey, locationName } = favoriteLocation;
             return (
@@ -30,7 +38,7 @@ class FavoritesContainer extends Component {
         
         return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <h1>Your Favorite Locations</h1>
+                <h1 style={{marginBottom: 30}}>Your Favorite Locations</h1>
                 {this.getFavoriteViews()}
             </div>
         );

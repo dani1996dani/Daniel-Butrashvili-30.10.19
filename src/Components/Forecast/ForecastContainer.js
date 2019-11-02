@@ -10,7 +10,7 @@ import DaysContainer from './DaysContainer';
 import CurrentConditions from './CurrentConditions';
 import Location from './Location';
 import { getStoredItem,setItemInStorage, currentConditionsPostfix } from './../../localStorage';
-import { setCurrentConditions } from './../../redux/currentConditions/currentConditionsActions';
+import { setCurrentConditions, getCurrentConditionsForLocation } from './../../redux/currentConditions/currentConditionsActions';
 import { addFavorite, removeFavorite } from './../../redux/favorites/favoritesActions';
 
 class ForecastContainer extends Component {
@@ -20,12 +20,28 @@ class ForecastContainer extends Component {
         cityOptions: [],
         forecastData: [],
         currentConditions: null,
+        currentConditionsErrored: false,
+        forecastError: false,
     }
 
     componentDidMount() {
         const { locationKey } = this.props.location;
         this.getForecastForLocation(locationKey);
-        this.getCurrentConditionsForLocation(locationKey);
+        this.handleGettingConditionsForLocation(locationKey);
+    }
+
+    handleGettingConditionsForLocation = (locationKey) => {
+        let didError;
+        getCurrentConditionsForLocation(locationKey).then((conditions) => {
+            this.props.setCurrentConditions(conditions);
+            didError = false;
+        }).catch((err) => {
+            didError = true;
+        }).finally(() => {
+            this.setState({
+                currentConditionsErrored: didError
+            });
+        })
     }
 
     onValueChange = (value) => {
@@ -45,7 +61,7 @@ class ForecastContainer extends Component {
 
         this.props.setNewLocation(Key, LocalizedName, Country.LocalizedName);
         this.getForecastForLocation(Key);
-        this.getCurrentConditionsForLocation(Key);
+        this.handleGettingConditionsForLocation(Key);
         console.log('this.props.location', this.props.location);
     }
 
@@ -70,37 +86,21 @@ class ForecastContainer extends Component {
             return;
         }
         //if null was returned from the cache, that means that the forecast is too old or doesn't exist, so we need to go get a new one from the server
+        let forecastErrored = false;
         axios.get(`${HOST}forecasts/v1/daily/5day/${locationKey}?apikey=${API_KEY}&metric=${metric}`, {}).then((res) => {
             const { data } = res;
+            forecastErrored = false;
             this.setState({
                 forecastData: data,
             });
             this.cacheForecast(locationKey, data);
         }).catch((err) => {
             console.log(`for location key ${locationKey}, the ERROR was,`, err.response);
-        })
-    }
-
-    getCurrentConditionsForLocation = (locationKey) => {
-        const cachedCurrentConditions = this.getCachedCurrentConditions(locationKey);
-        if (cachedCurrentConditions && cachedCurrentConditions !== undefined){
-            // this.setState({
-            //     currentConditions: cachedCurrentConditions
-            // });
-            this.props.setCurrentConditions(cachedCurrentConditions[0]);
-            console.log('you just used your own cache for current Conditions!');
-            return;
-        }
-        axios.get(`${HOST}currentconditions/v1/${locationKey}//?apikey=${API_KEY}`, {}).then((res) => {
-            const { data } = res;
-            console.log('getCurrentConditionsForLocation data for location key',locationKey , data);
-            // this.setState({
-            //     currentConditions: data,
-            // });
-            this.props.setCurrentConditions(data[0]);
-            this.cacheCurrentConditions(locationKey, data);
-        }).catch((err) => {
-            console.log(`getCurrentConditionsForLocation: for location key ${locationKey}, the ERROR was,`, err.response);
+            forecastErrored = true;
+        }).finally(() => {
+            this.setState({
+                forecastErrored,
+            })
         })
     }
 
@@ -115,27 +115,6 @@ class ForecastContainer extends Component {
         } else {
             return forecastData;
         }
-    }
-
-    getCachedCurrentConditions = (locationKey) => {
-        const savedData = localStorage.getItem(`${locationKey}${currentConditionsPostfix}`);
-        if (!savedData || savedData === undefined)
-            return null;
-        const currentConditionsData = JSON.parse(savedData);
-        const { expirationTimestamp } = currentConditionsData;
-        if (expirationTimestamp < Date.now()){
-            return null;
-        } else {
-            return currentConditionsData;
-        }
-    }
-
-    cacheCurrentConditions = (locationKey, currentConditions) => {
-        const dataToSave = {
-            ...currentConditions,
-            expirationTimestamp: Date.now() + FORECAST_EXPIRATION_TIME_SPAN
-        };
-        localStorage.setItem(`${locationKey}${currentConditionsPostfix}`, JSON.stringify(dataToSave));
     }
 
     cacheForecast = (locationKey, forecast) => {
@@ -192,6 +171,8 @@ class ForecastContainer extends Component {
                     options={this.state.cityOptions}
                     renderItem={this.renderSearchItem }
                     filterSearch={this.filterSearchOptions}
+                    pattern={"[A-Za-z_]"}
+                    patternError={"Only English Letters are Allowed"}
                  />
                  <Location 
                     location={location}
@@ -201,9 +182,11 @@ class ForecastContainer extends Component {
                     />
                 <CurrentConditions 
                     currentConditions={this.props.currentConditions}
+                    didError={this.state.currentConditionsErrored}
                 />
                 <DaysContainer 
                     forecast={this.state.forecastData}
+                    didError={this.state.forecastErrored}
                 />
             </div>
         );

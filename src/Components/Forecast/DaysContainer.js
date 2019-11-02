@@ -10,6 +10,12 @@ class DaysContainer extends Component{
     }
 
     render(){
+        const { didError } = this.props;
+        if (didError){
+            return (
+                <p>The Forecast is unavailable. Check your internet connection or try again later</p>
+            );
+        }
         const { DailyForecasts } = this.props.forecast;
         if (!DailyForecasts || DailyForecasts === undefined){
             return null;
