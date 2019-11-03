@@ -3,10 +3,6 @@ import { connect } from 'react-redux';
 
 class Location extends Component {
 
-    state = {
-        favorite: false
-    }
-
     toggleFavorite = () => {
         const { isFavorite, location } = this.props;
         const { locationKey } = location;

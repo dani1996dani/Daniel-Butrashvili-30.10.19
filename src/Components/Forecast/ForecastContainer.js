@@ -9,10 +9,10 @@ import { setNewLocation } from './../../redux/location/locationActions';
 import DaysContainer from './DaysContainer';
 import CurrentConditions from './CurrentConditions';
 import Location from './Location';
-import { getStoredItem,setItemInStorage, currentConditionsPostfix } from './../../localStorage';
 import { setCurrentConditions, getCurrentConditionsForLocation } from './../../redux/currentConditions/currentConditionsActions';
 import { addFavorite, removeFavorite } from './../../redux/favorites/favoritesActions';
 import { temperatureUnits } from './../../enums';
+import { imperialPostfix } from './../../localStorage';
 
 class ForecastContainer extends Component {
 
@@ -21,7 +21,6 @@ class ForecastContainer extends Component {
         cityOptions: [],
         forecastData: [],
         imperialForecastData: [],
-        currentConditions: null,
         currentConditionsErrored: false,
         forecastError: false,
     }
@@ -87,7 +86,6 @@ class ForecastContainer extends Component {
             this.setState({
                 [fieldToSet]: cachedForecast
             });
-            console.log('you just used your own cache!');
             return;
         }
         //if null was returned from the cache, that means that the forecast is too old or doesn't exist, so we need to go get a new one from the server
@@ -110,7 +108,7 @@ class ForecastContainer extends Component {
     }
 
     getCachedForecast = (locationKey, metric = true) => {
-        const key = metric ? locationKey : `${locationKey}_imperial`;
+        const key = metric ? locationKey : `${locationKey}${imperialPostfix}`;
         const savedData = localStorage.getItem(key);
         if (!savedData || savedData === undefined)
             return null;
@@ -124,7 +122,7 @@ class ForecastContainer extends Component {
     }
 
     cacheForecast = (locationKey, forecast, metric) => {
-        const key = metric ? locationKey : `${locationKey}_imperial`;
+        const key = metric ? locationKey : `${locationKey}${imperialPostfix}`;
         const dataToSave = {
             ...forecast,
             expirationTimestamp: Date.now() + FORECAST_EXPIRATION_TIME_SPAN
@@ -182,7 +180,7 @@ class ForecastContainer extends Component {
                     options={this.state.cityOptions}
                     renderItem={this.renderSearchItem }
                     filterSearch={this.filterSearchOptions}
-                    pattern={"[A-Za-z_]"}
+                    pattern={/^[a-zA-Z\s]*$/}
                     patternError={"Only English Letters are Allowed"}
                  />
                  <Location 

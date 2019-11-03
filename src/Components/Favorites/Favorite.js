@@ -44,11 +44,11 @@ class Favorite extends Component {
             <div className='favorite-card' style={{ width: '20%', minWidth: 200 }} onClick={this.props.onClick}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <p  style={{textAlign: 'left', color: textColor}} className='favorite'>{locationName}</p>
-                        <p  style={{fontSize: 12, color: 'gray', fontStyle: 'italic', textAlign: 'left', marginLeft: 8}}>ID: {locationKey}</p>
+                        <p style={{ textAlign: 'left', color: textColor }} className='favorite'>{locationName}</p>
+                        <p style={{ fontSize: 12, color: 'gray', fontStyle: 'italic', textAlign: 'left', marginLeft: 8 }}>ID: {locationKey}</p>
                     </div>
                     <div>
-                        <p style={{color: textColor}} className='favorite'>{this.getCurrentDegrees()}</p>
+                        <p style={{ color: textColor }} className='favorite'>{this.getCurrentDegrees()}</p>
                     </div>
                 </div>
                 <hr style={{ margin: 0 }} />

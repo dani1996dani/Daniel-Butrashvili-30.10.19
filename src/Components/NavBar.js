@@ -3,21 +3,21 @@ import { connect } from 'react-redux';
 import ToggleButton from 'react-toggle-button';
 
 import { setPage } from './../redux/page/pageActions';
-import { themes, temperatureUnits } from './../enums';
+import { themes, temperatureUnits, pageNames } from './../enums';
 import { setTheme } from './../redux/theme/themeActions';
 import { setTemperatureUnit } from './../redux/temperatureUnit/temperatureUnitActions';
 
 
 class NavBar extends Component {
     render() {
-        const pages = ['Forecast', 'Favorites'];
+        const pages = [pageNames.Forecast, pageNames.Favorites];
         const { textColor } = this.props.theme;
         const { pageName } = this.props.page;
         const pageLinks = pages.map((page, index) => {
             const isSelectedPage = pageName === page;
             const className = isSelectedPage ? 'active no-select' : 'no-select';
             return (
-                <span style={{color: textColor}} key={index} onClick={() => { this.props.setPage(page) }} className={className}>{page}</span>
+                <span style={{ color: textColor }} key={index} onClick={() => { this.props.setPage(page) }} className={className}>{page}</span>
             );
         })
         return (
@@ -28,10 +28,10 @@ class NavBar extends Component {
                         <div className="navbar-links">
                             {pageLinks}
                         </div>
-                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 8}}>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
                             <ToggleButton
                                 value={this.props.theme.theme !== themes.light}
-                                
+
                                 inactiveLabel={'Light'}
                                 activeLabel={'Dark'}
                                 colors={{
@@ -51,13 +51,13 @@ class NavBar extends Component {
                                     }
                                 }}
                                 onToggle={(value) => {
-                                    const theme = value ? themes.light : themes.dark ;
+                                    const theme = value ? themes.light : themes.dark;
                                     this.props.setTheme(theme);
                                 }}
                             />
                             <ToggleButton
                                 value={this.props.temperatureUnit.unit !== temperatureUnits.C}
-                                
+
                                 inactiveLabel={'C°'}
                                 activeLabel={'F°'}
                                 colors={{
@@ -77,13 +77,12 @@ class NavBar extends Component {
                                     }
                                 }}
                                 onToggle={(value) => {
-                                    const temperatureUnit = value ? temperatureUnits.C : temperatureUnits.F ;
+                                    const temperatureUnit = value ? temperatureUnits.C : temperatureUnits.F;
                                     this.props.setTemperatureUnit(temperatureUnit);
                                 }}
                             />
                         </div>
                     </div>
-
                 </div>
                 <hr style={{ marginTop: 0, marginBottom: '2rem' }} />
             </div>

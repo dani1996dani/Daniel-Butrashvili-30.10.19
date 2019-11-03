@@ -14,13 +14,13 @@ export const setCurrentConditions = dispatcher => (currentConditions) => {
 export const getCurrentConditionsForLocation = (locationKey) => {
     return new Promise((resolve, reject) => {
         const cachedCurrentConditions = getCachedCurrentConditions(locationKey);
-        console.log('you just used your own cache for current Conditions!', cachedCurrentConditions);
         if (cachedCurrentConditions && cachedCurrentConditions !== undefined) {
             return resolve(cachedCurrentConditions);
         }
         axios.get(`${HOST}currentconditions/v1/${locationKey}//?apikey=${API_KEY}`, {}).then((res) => {
             const { data } = res;
             console.log('getCurrentConditionsForLocation data for location key', locationKey, data);
+            //the API returns an array instead of an object, so we grab the first result and cache it as an object.
             const dataToResolve = data[0];
             cacheCurrentConditions(locationKey, dataToResolve);
             return resolve(dataToResolve);

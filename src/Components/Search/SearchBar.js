@@ -4,8 +4,6 @@ class SearchBar extends Component {
 
     state = {
         value: '',
-        inputClassName: 'search',
-        clickedOnSuggestion: false,
         shouldRenderAutoComplete: false,
         listenToKeyEvents: false,
         selectedIndex: -1,
@@ -20,14 +18,7 @@ class SearchBar extends Component {
 
     selectValue = (value) => {
         this.props.onValueSelect(value);
-        // this.setValue(value, false);
         this.setShouldRenderAutoComplete(false);
-    }
-
-    setClickedOnSuggestion = (bool) => {
-        this.setState({
-            clickedOnSuggestion: bool
-        });
     }
 
     resetSelectedIndex = () => {
@@ -110,11 +101,8 @@ class SearchBar extends Component {
         const { value } = this.state;
         const { options } = this.props;
         const filteredOptions = this.props.filterSearch(options, value);
-        // const filteredOptions = options.filter((option) => option.toLowerCase().includes(value.toLowerCase()));
         return filteredOptions;
     }
-
-    
 
     renderAutoComplete = () => {
         const { shouldRenderAutoComplete, maxOptionsVisible } = this.state;

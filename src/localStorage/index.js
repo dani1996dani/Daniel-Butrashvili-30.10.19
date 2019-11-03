@@ -1,8 +1,8 @@
-import { getStoredItem, setItemInStorage } from './localStorage';
-import { currentConditionsPostfix } from './settings';
+
+import { currentConditionsPostfix, favoritesKey, imperialPostfix } from './settings';
 
 export {
-    getStoredItem,
-    setItemInStorage,
-    currentConditionsPostfix
+    currentConditionsPostfix,
+     favoritesKey,
+     imperialPostfix
 };

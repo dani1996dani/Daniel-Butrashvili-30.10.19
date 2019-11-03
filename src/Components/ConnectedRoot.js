@@ -6,7 +6,8 @@ import { setFavoritesArray } from './../redux/favorites/favoritesActions';
 import { setNewLocation, getLocationsWithCoords } from './../redux/location/locationActions';
 import { setTemperatureUnit, getTemperatureUnitFromCache } from './../redux/temperatureUnit/temperatureUnitActions';
 import { setTheme, getThemeFromCache } from './../redux/theme/themeActions';
-import { temperatureUnits, themes } from './../enums';
+import { temperatureUnits, themes, pageNames } from './../enums';
+import { favoritesKey } from './../localStorage';
 
 class ConnectedRoot extends Component {
 
@@ -20,10 +21,10 @@ class ConnectedRoot extends Component {
     initTheme = () => {
         const cachedTheme = getThemeFromCache();
         let themeToSet;
-        if (!cachedTheme){
+        if (!cachedTheme) {
             themeToSet = themes.light;
         }
-        else{
+        else {
             themeToSet = cachedTheme;
         }
         this.props.setTheme(themeToSet);
@@ -32,10 +33,10 @@ class ConnectedRoot extends Component {
     initTemperatureUnit = () => {
         const cachedTemperatureUnit = getTemperatureUnitFromCache();
         let unitToSet;
-        if (!cachedTemperatureUnit){
+        if (!cachedTemperatureUnit) {
             unitToSet = temperatureUnits.C;
         }
-        else{
+        else {
             unitToSet = cachedTemperatureUnit;
         }
         this.props.setTemperatureUnit(unitToSet);
@@ -47,7 +48,7 @@ class ConnectedRoot extends Component {
     }
 
     initCurrentLocation = () => {
-        if (navigator.geolocation){
+        if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((geoData) => {
                 const { latitude, longitude } = geoData.coords;
                 console.log(latitude, longitude);
@@ -67,23 +68,19 @@ class ConnectedRoot extends Component {
         })
     }
 
-    //move to connectedRoot
     getFavoritesFromCache = () => {
-        const savedFavorites = localStorage.getItem('favorites');
+        const savedFavorites = localStorage.getItem(favoritesKey);
         if (!savedFavorites || savedFavorites === undefined)
             return [];
         const savedArray = JSON.parse(savedFavorites);
-        this.setState({
-            favorites: savedArray
-        })
         return savedArray;
     }
 
     getCurrentPage = () => {
         switch (this.props.page.pageName) {
-            case 'Forecast':
+            case pageNames.Forecast:
                 return (<ForecastContainer />);
-            case 'Favorites':
+            case pageNames.Favorites:
                 return (<FavoritesContainer />)
             default: return null;
         }
@@ -93,15 +90,12 @@ class ConnectedRoot extends Component {
         const { theme } = this.props.theme;
         return (
             <div className={`connected-root ${theme}`}>
-            <NavBar />
-            {this.getCurrentPage()}
+                <NavBar />
+                {this.getCurrentPage()}
             </div>
         )
-        
-        
     }
 }
-
 
 const mapStateToProps = state => {
     return {

@@ -1,7 +1,8 @@
 import { SET_PAGE } from '../types';
+import { pageNames } from './../../enums';
 
 const initialState = {
-    pageName: 'Forecast',
+    pageName: pageNames.Forecast,
 };
 
 export default (state = initialState, action) => {

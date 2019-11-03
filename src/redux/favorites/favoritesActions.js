@@ -1,4 +1,5 @@
 import { SET_FAVORITES_ARRAY } from '../types';
+import { favoritesKey } from './../../localStorage';
 
 export const addFavorite = dispatch => (currentFavorites, locationKey, locationName, countryName) => {
     let arrayToSet;
@@ -16,10 +17,7 @@ export const addFavorite = dispatch => (currentFavorites, locationKey, locationN
     arrayToSet.push(newLocation);
     cacheFavoriteLocationArray(arrayToSet);
 
-    dispatch({
-        type: SET_FAVORITES_ARRAY,
-        payload: arrayToSet
-    });
+    setFavoritesArray(dispatch)(arrayToSet);
 }
 
 export const removeFavorite = dispatch => (currentFavorites, locationKey) => {
@@ -30,10 +28,7 @@ export const removeFavorite = dispatch => (currentFavorites, locationKey) => {
     const arrayToSet = currentFavorites.filter((favoriteLocation) => favoriteLocation.locationKey !== locationKey);
     cacheFavoriteLocationArray(arrayToSet);
 
-    dispatch({
-        type: SET_FAVORITES_ARRAY,
-        payload: arrayToSet,
-    })
+    setFavoritesArray(dispatch)(arrayToSet);
 }
 
 export const setFavoritesArray = dispatch => (favoritesArray) => {
@@ -44,5 +39,5 @@ export const setFavoritesArray = dispatch => (favoritesArray) => {
 }
 
 const cacheFavoriteLocationArray = (favoriteArray) => {
-    localStorage.setItem('favorites', JSON.stringify(favoriteArray));
+    localStorage.setItem(favoritesKey, JSON.stringify(favoriteArray));
 }
