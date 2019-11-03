@@ -13,7 +13,6 @@ class FavoritesContainer extends Component {
 
     getFavoriteViews = () => {
         const { favorites, temperatureUnit } = this.props;
-        console.log();
         const isMetric = temperatureUnit.unit === temperatureUnits.C;
         if (!favorites || favorites === undefined || favorites.length === 0)
             return (

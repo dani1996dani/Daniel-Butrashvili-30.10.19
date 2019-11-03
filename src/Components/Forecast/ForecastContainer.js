@@ -51,11 +51,9 @@ class ForecastContainer extends Component {
             searchValue: value,
         })
         this.getAutoCompleteSuggestions(value);
-        console.log('forecast value CHANGE:', value);
     };
 
     onValueSelect = (value) => {
-        console.log('forecast value SELECT:', value);
         const { Key, LocalizedName, Country } = value;
         this.setState({
             searchValue: LocalizedName
@@ -65,13 +63,11 @@ class ForecastContainer extends Component {
         this.getForecastForLocation(Key);
         this.getForecastForLocation(Key, false);
         this.handleGettingConditionsForLocation(Key);
-        console.log('this.props.location', this.props.location);
     }
 
     getAutoCompleteSuggestions = debounce((query) => {
         axios.get(`${HOST}locations/v1/cities/autocomplete?apikey=${API_KEY}&q=${query}`).then((res) => {
             const { data } = res;
-            console.log('data', data);
             this.setState({
                 cityOptions: data,
             });
@@ -98,7 +94,6 @@ class ForecastContainer extends Component {
             });
             this.cacheForecast(locationKey, data, metric);
         }).catch((err) => {
-            console.log(`for location key ${locationKey}, the ERROR was,`, err.response);
             forecastErrored = true;
         }).finally(() => {
             this.setState({
@@ -153,7 +148,6 @@ class ForecastContainer extends Component {
 
     isLocationFavorite = (locationKey) => {
         const savedFavorites = this.props.favorites;
-        // console.log('savedFavorites', savedFavorites);
         if (!savedFavorites)
             return false;
         for (let i = 0; i < savedFavorites.length; i++){
@@ -166,8 +160,6 @@ class ForecastContainer extends Component {
 
     render() {
         const { location } = this.props;
-        console.log('container location', location);
-        console.log('imperialForecastData', this.state.imperialForecastData);
         const { locationKey, locationName, locationCountryName } = location;
         const isMetric = this.props.temperatureUnit.unit === temperatureUnits.C;
 

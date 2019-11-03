@@ -51,7 +51,6 @@ class ConnectedRoot extends Component {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((geoData) => {
                 const { latitude, longitude } = geoData.coords;
-                console.log(latitude, longitude);
                 this.setLocationWithCoords(latitude, longitude);
             });
         }
@@ -59,12 +58,10 @@ class ConnectedRoot extends Component {
 
     setLocationWithCoords = (latitude, longitude) => {
         getLocationsWithCoords(latitude, longitude).then((newLocation) => {
-            console.log('new location using geo', newLocation);
             const { Key, LocalizedName, Country } = newLocation;
             const countryName = Country.LocalizedName;
             this.props.setNewLocation(Key, LocalizedName, countryName);
         }).catch((err) => {
-            console.log('err', err.response);
         })
     }
 

@@ -18,7 +18,6 @@ class DaysContainer extends Component {
         if (!DailyForecasts || DailyForecasts === undefined) {
             return null;
         }
-        console.log('isMetric', isMetric);
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const dayCards = DailyForecasts.map((dailyForecast, index) => {
             let dayTitle;

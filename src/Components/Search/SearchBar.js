@@ -74,7 +74,6 @@ class SearchBar extends Component {
                 break;
             default: return;
         }
-        console.log('selectedIndex', this.state.selectedIndex);
     }
 
     setListenToKeyEvents = (bool) => {
