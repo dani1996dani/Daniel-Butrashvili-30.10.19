@@ -1,6 +1,6 @@
-import { ADD_FAVORITE, REMOVE_FAVORITE, SET_FAVORITES_ARRAY } from '../types';
+import { SET_FAVORITES_ARRAY } from '../types';
 
-export const addFavorite = dispatch => (currentFavorites, locationKey, locationName) => {
+export const addFavorite = dispatch => (currentFavorites, locationKey, locationName, countryName) => {
     let arrayToSet;
     if (!currentFavorites || currentFavorites === undefined) {
         arrayToSet = [];
@@ -11,12 +11,13 @@ export const addFavorite = dispatch => (currentFavorites, locationKey, locationN
     const newLocation = {
         locationKey,
         locationName,
+        countryName,
     }
     arrayToSet.push(newLocation);
     cacheFavoriteLocationArray(arrayToSet);
 
     dispatch({
-        type: ADD_FAVORITE,
+        type: SET_FAVORITES_ARRAY,
         payload: arrayToSet
     });
 }
@@ -30,7 +31,7 @@ export const removeFavorite = dispatch => (currentFavorites, locationKey) => {
     cacheFavoriteLocationArray(arrayToSet);
 
     dispatch({
-        type: REMOVE_FAVORITE,
+        type: SET_FAVORITES_ARRAY,
         payload: arrayToSet,
     })
 }

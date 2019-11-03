@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 class CurrentConditions extends Component{
     render(){
-        const { currentConditions, didError } = this.props;
+        const { currentConditions, didError, isMetric } = this.props;
+        const { textColor } = this.props.theme;
         if (didError)
             return (
-                <p className='current-conditions-title'>Real Time Weather is Unavailable</p>
+                <p style={{color: textColor}} className='current-conditions-title'>Real Time Weather is Unavailable</p>
             );
         if (!currentConditions || currentConditions === undefined){
             return null;
@@ -13,15 +15,25 @@ class CurrentConditions extends Component{
         const { Temperature, WeatherText } = currentConditions;
         if (!Temperature || Temperature === undefined || !WeatherText || WeatherText === undefined)
             return null;
-        const valueToShow = Math.round(Temperature.Metric.Value);
+        const measurementObject = isMetric ? Temperature.Metric : Temperature.Imperial;
+        const valueToShow = Math.round(measurementObject.Value);
         return(
             <div>
-                <p className='current-conditions-title'>Real Time Weather</p>
-                <p className='current-conditions-degrees'>{valueToShow}° {Temperature.Metric.Unit}</p>
-                <p>{WeatherText}</p>
+                <p style={{color: textColor}} className='current-conditions-title'>Real Time Weather</p>
+                <p style={{color: textColor}} className='current-conditions-degrees'>{valueToShow}° {measurementObject.Unit}</p>
+                <p style={{color: textColor}}>{WeatherText}</p>
             </div>
         );
     }
 }
 
-export default CurrentConditions;
+const mapStateToProps = state => {
+    return {
+        theme: state.theme,
+    };
+};
+
+const mapDispatchToProps = dispatch => ({
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentConditions);

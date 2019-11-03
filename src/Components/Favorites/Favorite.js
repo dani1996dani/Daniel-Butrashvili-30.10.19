@@ -32,21 +32,23 @@ class Favorite extends Component {
         const { Temperature } = currentConditions;
         if (!Temperature || Temperature === undefined)
             return '';
-        const valueToShow = Math.round(Temperature.Metric.Value);
-        return `${valueToShow}°${Temperature.Metric.Unit}`;
+        const { isMetric } = this.props;
+        const measurementObject = isMetric ? Temperature.Metric : Temperature.Imperial;
+        const valueToShow = Math.round(measurementObject.Value);
+        return `${valueToShow}°${measurementObject.Unit}`;
     }
 
     render() {
-        const { locationName, locationKey } = this.props;
+        const { locationName, locationKey, textColor } = this.props;
         return (
             <div className='favorite-card' style={{ width: '20%', minWidth: 200 }} onClick={this.props.onClick}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <p style={{textAlign: 'left'}} className='favorite'>{locationName}</p>
-                        <p style={{fontSize: 12, color: 'gray', fontStyle: 'italic', textAlign: 'left', marginLeft: 8}}>ID: {locationKey}</p>
+                        <p  style={{textAlign: 'left', color: textColor}} className='favorite'>{locationName}</p>
+                        <p  style={{fontSize: 12, color: 'gray', fontStyle: 'italic', textAlign: 'left', marginLeft: 8}}>ID: {locationKey}</p>
                     </div>
                     <div>
-                        <p className='favorite'>{this.getCurrentDegrees()}</p>
+                        <p style={{color: textColor}} className='favorite'>{this.getCurrentDegrees()}</p>
                     </div>
                 </div>
                 <hr style={{ margin: 0 }} />

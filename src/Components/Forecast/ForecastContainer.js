@@ -12,6 +12,7 @@ import Location from './Location';
 import { getStoredItem,setItemInStorage, currentConditionsPostfix } from './../../localStorage';
 import { setCurrentConditions, getCurrentConditionsForLocation } from './../../redux/currentConditions/currentConditionsActions';
 import { addFavorite, removeFavorite } from './../../redux/favorites/favoritesActions';
+import { temperatureUnits } from './../../enums';
 
 class ForecastContainer extends Component {
 
@@ -19,6 +20,7 @@ class ForecastContainer extends Component {
         searchValue: '',
         cityOptions: [],
         forecastData: [],
+        imperialForecastData: [],
         currentConditions: null,
         currentConditionsErrored: false,
         forecastError: false,
@@ -27,6 +29,7 @@ class ForecastContainer extends Component {
     componentDidMount() {
         const { locationKey } = this.props.location;
         this.getForecastForLocation(locationKey);
+        this.getForecastForLocation(locationKey, false);
         this.handleGettingConditionsForLocation(locationKey);
     }
 
@@ -61,6 +64,7 @@ class ForecastContainer extends Component {
 
         this.props.setNewLocation(Key, LocalizedName, Country.LocalizedName);
         this.getForecastForLocation(Key);
+        this.getForecastForLocation(Key, false);
         this.handleGettingConditionsForLocation(Key);
         console.log('this.props.location', this.props.location);
     }
@@ -77,10 +81,11 @@ class ForecastContainer extends Component {
     }, 400, { trailing: true });
 
     getForecastForLocation = (locationKey, metric = true) => {
-        const cachedForecast = this.getCachedForecast(locationKey);
+        const cachedForecast = this.getCachedForecast(locationKey, metric);
+        const fieldToSet = metric ? 'forecastData' : 'imperialForecastData';
         if (cachedForecast && cachedForecast !== undefined){
             this.setState({
-                forecastData: cachedForecast
+                [fieldToSet]: cachedForecast
             });
             console.log('you just used your own cache!');
             return;
@@ -91,9 +96,9 @@ class ForecastContainer extends Component {
             const { data } = res;
             forecastErrored = false;
             this.setState({
-                forecastData: data,
+                [fieldToSet]: data,
             });
-            this.cacheForecast(locationKey, data);
+            this.cacheForecast(locationKey, data, metric);
         }).catch((err) => {
             console.log(`for location key ${locationKey}, the ERROR was,`, err.response);
             forecastErrored = true;
@@ -104,8 +109,9 @@ class ForecastContainer extends Component {
         })
     }
 
-    getCachedForecast = (locationKey) => {
-        const savedData = localStorage.getItem(locationKey);
+    getCachedForecast = (locationKey, metric = true) => {
+        const key = metric ? locationKey : `${locationKey}_imperial`;
+        const savedData = localStorage.getItem(key);
         if (!savedData || savedData === undefined)
             return null;
         const forecastData = JSON.parse(savedData);
@@ -117,12 +123,13 @@ class ForecastContainer extends Component {
         }
     }
 
-    cacheForecast = (locationKey, forecast) => {
+    cacheForecast = (locationKey, forecast, metric) => {
+        const key = metric ? locationKey : `${locationKey}_imperial`;
         const dataToSave = {
             ...forecast,
             expirationTimestamp: Date.now() + FORECAST_EXPIRATION_TIME_SPAN
         };
-        localStorage.setItem(locationKey, JSON.stringify(dataToSave));
+        localStorage.setItem(key, JSON.stringify(dataToSave));
     }
 
     renderSearchItem = (value, isSelected, index) => {
@@ -161,7 +168,11 @@ class ForecastContainer extends Component {
 
     render() {
         const { location } = this.props;
-        const { locationKey, locationName } = location;
+        console.log('container location', location);
+        console.log('imperialForecastData', this.state.imperialForecastData);
+        const { locationKey, locationName, locationCountryName } = location;
+        const isMetric = this.props.temperatureUnit.unit === temperatureUnits.C;
+
         return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1}}>
                 <SearchBar
@@ -177,15 +188,18 @@ class ForecastContainer extends Component {
                  <Location 
                     location={location}
                     isFavorite={this.isLocationFavorite(locationKey)}
-                    onFavorite={() => {this.props.addFavorite(this.props.favorites, locationKey, locationName);}}
+                    onFavorite={() => {this.props.addFavorite(this.props.favorites, locationKey, locationName, locationCountryName);}}
                     onUnFavorite={() => {this.props.removeFavorite(this.props.favorites, locationKey)}}
                     />
                 <CurrentConditions 
                     currentConditions={this.props.currentConditions}
                     didError={this.state.currentConditionsErrored}
+                    isMetric={isMetric}
                 />
                 <DaysContainer 
                     forecast={this.state.forecastData}
+                    imperialForecast={this.state.imperialForecastData}
+                    isMetric={isMetric}
                     didError={this.state.forecastErrored}
                 />
             </div>
@@ -198,6 +212,7 @@ const mapStateToProps = state => {
         location: state.location,
         currentConditions: state.currentConditions,
         favorites: state.favorites,
+        temperatureUnit: state.temperatureUnit
     };
 };
 

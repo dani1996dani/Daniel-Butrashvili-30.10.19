@@ -3,16 +3,18 @@ import { connect } from 'react-redux';
 import Favorite from './Favorite';
 import { setPage } from './../../redux/page/pageActions';
 import { setNewLocation } from './../../redux/location/locationActions';
-
+import { temperatureUnits } from './../../enums';
 class FavoritesContainer extends Component {
 
-    onFavoriteClick = (locationKey, locationName) => {
-        this.props.setNewLocation(locationKey, locationName);
+    onFavoriteClick = (locationKey, locationName, countryName) => {
+        this.props.setNewLocation(locationKey, locationName, countryName);
         this.props.setPage('Forecast');
     }
 
     getFavoriteViews = () => {
-        const { favorites } = this.props;
+        const { favorites, temperatureUnit } = this.props;
+        console.log();
+        const isMetric = temperatureUnit.unit === temperatureUnits.C;
         if (!favorites || favorites === undefined || favorites.length === 0)
             return (
                 <div>
@@ -21,13 +23,15 @@ class FavoritesContainer extends Component {
                 </div>
             );
         const favoriteViews = this.props.favorites.map((favoriteLocation, index) => {
-            const { locationKey, locationName } = favoriteLocation;
+            const { locationKey, locationName, countryName } = favoriteLocation;
             return (
                 <Favorite
                     key={index}
                     locationName={locationName}
                     locationKey={locationKey}
-                    onClick={() => {this.onFavoriteClick(locationKey, locationName); }}
+                    onClick={() => {this.onFavoriteClick(locationKey, locationName, countryName); }}
+                    textColor={this.props.theme.textColor}
+                    isMetric={isMetric}
                  />
             );
         })
@@ -38,7 +42,7 @@ class FavoritesContainer extends Component {
         
         return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <h1 style={{marginBottom: 30}}>Your Favorite Locations</h1>
+                <h1 style={{marginBottom: 30, color: this.props.theme.textColor}}>Your Favorite Locations</h1>
                 {this.getFavoriteViews()}
             </div>
         );
@@ -50,6 +54,8 @@ const mapStateToProps = state => {
     return {
         page: state.page,
         favorites: state.favorites,
+        theme: state.theme,
+        temperatureUnit: state.temperatureUnit
     };
 };
 

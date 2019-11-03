@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import DayCard from './DayCard';
+
 
 class DaysContainer extends Component{
 
@@ -10,16 +13,18 @@ class DaysContainer extends Component{
     }
 
     render(){
-        const { didError } = this.props;
+        const { didError, theme, isMetric, forecast, imperialForecast } = this.props;
         if (didError){
             return (
-                <p>The Forecast is unavailable. Check your internet connection or try again later</p>
+                <p style={{color: theme.textColor}}>The Forecast is unavailable. Check your internet connection or try again later</p>
             );
         }
-        const { DailyForecasts } = this.props.forecast;
+        const forecastSystem = isMetric ? forecast : imperialForecast;
+        const { DailyForecasts } = forecastSystem;
         if (!DailyForecasts || DailyForecasts === undefined){
             return null;
         }
+        console.log('isMetric', isMetric);
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const dayCards = DailyForecasts.map((dailyForecast, index) => {
             let dayTitle;
@@ -30,7 +35,13 @@ class DaysContainer extends Component{
                 const forecastDayIndex = forecastDate.getDay();
                 dayTitle = dayNames[forecastDayIndex];
             }
-            return (<DayCard key={index} dayTitle={dayTitle} dailyForecast={dailyForecast} isToday={index === 0}/>)
+            return (<DayCard 
+            key={index} 
+            dayTitle={dayTitle} 
+            dailyForecast={dailyForecast} 
+            isToday={index === 0}
+            isMetric
+            />)
         })
         
         return (
@@ -41,4 +52,14 @@ class DaysContainer extends Component{
     }
 }
 
-export default DaysContainer;
+const mapStateToProps = state => {
+    return {
+        theme: state.theme,
+        temperatureUnit: state.temperatureUnit
+    };
+};
+
+const mapDispatchToProps = dispatch => ({
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DaysContainer);
